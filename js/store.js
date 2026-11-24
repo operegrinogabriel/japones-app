@@ -19,6 +19,8 @@ const DEFAULTS = () => ({
   filter: { aula: '', nivel: '', tag: '' },
   katakanaRuns: [], // { at, ms, n, erros: [ids] }
   hardParticles: {}, // chave da pergunta → nº de erros
+  hist: [], // respostas da revisão { at, id, g, novo }, para o relatório
+  particleHist: [], // respostas do quiz de partículas { at, key, p, escolhida }
   importedLessons: [], // JSON de aulas importadas pelo app
   lastBackup: 0,
 });
@@ -58,6 +60,15 @@ export const settings = () => state.settings;
 export function setSetting(k, v) {
   state.settings[k] = v;
   save();
+}
+
+// Guarda um evento num histórico, mantendo só os últimos 120 dias. Não salva sozinho.
+const KEEP_MS = 120 * 86400e3;
+export function logEvent(list, entry) {
+  const arr = (state[list] = state[list] || []);
+  const now = Date.now();
+  arr.push({ at: now, ...entry });
+  if (arr.length && arr[0].at < now - KEEP_MS) state[list] = arr.filter((e) => e.at >= now - KEEP_MS);
 }
 
 export function today() {

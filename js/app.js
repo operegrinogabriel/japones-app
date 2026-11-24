@@ -6,6 +6,7 @@ import * as ui from './ui.js';
 import * as review from './review.js';
 import * as views from './views.js';
 import * as browse from './browse.js';
+import * as report from './report.js';
 import { esc } from './util.js';
 
 const root = document.getElementById('app');
@@ -21,6 +22,7 @@ const ROUTES = {
   haiku: browse.haiku,
   busca: browse.busca,
   ajustes: browse.ajustes,
+  relatorio: report.render,
 };
 
 function parseHash() {

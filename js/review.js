@@ -25,9 +25,11 @@ const startOfToday = () => endOfStudyDay() - 86400e3;
 
 // Um card de produção (pt → jp) só aparece como novo depois que o de reconhecimento
 // foi visto num dia anterior.
+export const recIdOf = (card) => (card.kind === 'vocab-prod' ? card.id.replace(/:prod$/, ':rec') : card.kind === 'frase-prod' ? card.item.id : null);
 function newEligible(card) {
-  if (card.kind !== 'vocab-prod') return true;
-  const rec = srs.getCard(card.id.replace(/:prod$/, ':rec'));
+  const recId = recIdOf(card);
+  if (!recId) return true;
+  const rec = srs.getCard(recId);
   return !!rec && rec.state !== 'new' && rec.last < startOfToday();
 }
 
@@ -54,7 +56,7 @@ export function counts(deck = 'todos') {
 function mixKinds(cards) {
   const groups = {};
   for (const card of cards) {
-    const k = card.kind === 'vocab-prod' ? 'vocab-rec' : card.kind;
+    const k = card.kind === 'vocab-prod' ? 'vocab-rec' : card.kind === 'frase-prod' ? 'frase' : card.kind;
     (groups[k] = groups[k] || []).push(card);
   }
   const weights = { 'vocab-rec': 3, frase: 1, erro: 1, kata: 1 };
@@ -97,6 +99,8 @@ function frontHTML(card) {
       return `<div class="prompt-label">Como se diz em japonês?</div><div class="pt-big">${esc(it.pt)}</div>`;
     case 'frase':
       return `<div class="prompt-label">Traduza</div>${ui.jp(it.jp, { romaji: it.romaji, size: 'l' })}`;
+    case 'frase-prod':
+      return `<div class="prompt-label">Diga em japonês</div><div class="pt-big">${esc(it.pt)}</div><p class="muted small center">Fale em voz alta ou monte a frase de cabeça, depois confira.</p>`;
     case 'erro':
       return `<div class="prompt-label">O que está errado?</div><div class="jp jp-l wrong" lang="ja">${toHTML(it.errado)}</div>`;
     case 'kata':
@@ -115,6 +119,8 @@ function backHTML(card) {
       return `<div class="answer">${ui.jp(it.jp, { say: it.kana || plain(it.jp), romaji: it.romaji, size: 'xl' })}${it.kana && it.kana !== plain(it.jp) ? `<div class="kana" lang="ja">${esc(it.kana)}</div>` : ''}${nota}${ui.chips(it)}</div>`;
     case 'frase':
       return `<div class="answer"><div class="pt-med">${esc(it.pt)}</div>${nota}${ui.chips(it)}</div>`;
+    case 'frase-prod':
+      return `<div class="answer">${ui.jp(it.jp, { romaji: it.romaji, size: 'l' })}${nota}${ui.chips(it)}</div>`;
     case 'erro': {
       const { maskA, maskB } = diffMask(plain(it.errado), plain(it.certo));
       return `<div class="answer"><div class="prompt-label">Você escreveu</div><div class="jp jp-m strike" lang="ja">${toHTML(it.errado, maskA)}</div><div class="prompt-label">Natural</div>${ui.jp(it.certo, { mark: maskB, size: 'l' })}<div class="nota">${esc(it.explicacao || '')}</div>${ui.chips(it)}</div>`;
@@ -190,7 +196,7 @@ export function render(root, params) {
       const on = srs.toggleStar(card.id);
       e.currentTarget.classList.toggle('on', on);
     });
-    if (!sess.flipped && store.settings().autoplay && card.kind !== 'vocab-prod' && card.kind !== 'erro' && card.kind !== 'kata') tts.speak(sayText(card));
+    if (!sess.flipped && store.settings().autoplay && !['vocab-prod', 'frase-prod'].includes(card.kind) && card.kind !== 'erro' && card.kind !== 'kata') tts.speak(sayText(card));
   };
 
   const flip = () => {

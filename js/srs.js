@@ -109,6 +109,7 @@ export function answer(id, grade) {
   const t = store.today();
   t.reviews++;
   if (wasNew) t.novos++;
+  store.logEvent('hist', { id, g: grade, novo: wasNew || undefined });
   store.save();
   return s.cards[id];
 }

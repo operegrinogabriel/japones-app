@@ -119,7 +119,11 @@ function build(lessons) {
     add({ id: `${v.id}:rec`, kind: 'vocab-rec', item: v, aula: v.aula, nivel: v.nivel, tags: ['vocab', ...v.tags] });
     add({ id: `${v.id}:prod`, kind: 'vocab-prod', item: v, aula: v.aula, nivel: v.nivel, tags: ['vocab', ...v.tags] });
   }
-  for (const f of db.frases) add({ id: f.id, kind: 'frase', item: f, aula: f.aula, nivel: null, tags: ['frase', ...f.tags] });
+  // Frases: japonês → português (id sem sufixo, como na primeira versão) e português → japonês.
+  for (const f of db.frases) {
+    add({ id: f.id, kind: 'frase', item: f, aula: f.aula, nivel: null, tags: ['frase', ...f.tags] });
+    add({ id: `${f.id}:prod`, kind: 'frase-prod', item: f, aula: f.aula, nivel: null, tags: ['frase', ...f.tags] });
+  }
   for (const e of db.erros) add({ id: e.id, kind: 'erro', item: e, aula: e.aula, nivel: null, tags: e.tags });
   for (const k of db.katakana) add({ id: `${k.id}:kata`, kind: 'kata', item: k, aula: k.aula, nivel: null, tags: k.tags, dormant: true });
 

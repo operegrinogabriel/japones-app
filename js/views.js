@@ -20,7 +20,10 @@ export function home(root) {
   root.innerHTML = `
     <header class="top home-top">
       <h1 class="logo" lang="ja">日本語</h1>
-      <button class="filter-btn ${fl ? 'on' : ''}" data-open-filter>${ui.ICON.filter}<span>${fl ? esc(fl) : 'Filtros'}</span></button>
+      <div class="top-right">
+        <button class="filter-btn ${fl ? 'on' : ''}" data-open-filter>${ui.ICON.filter}<span>${fl ? esc(fl) : 'Filtros'}</span></button>
+        <a class="icon-btn" href="#/ajustes" aria-label="Ajustes">${ui.ICON.gear}</a>
+      </div>
     </header>
     <main class="pad home">
       ${store.backupDue() ? `<a class="banner" href="#/ajustes">Faz mais de 2 semanas sem backup. Toque para exportar seu progresso.</a>` : ''}
@@ -38,7 +41,7 @@ export function home(root) {
         <a href="#/haiku" class="mode"><span class="mi" lang="ja">句</span><b>Haiku</b><small>${data.DB.haiku.length} haiku</small></a>
         <a href="#/dificeis" class="mode"><span class="mi">★</span><b>Difíceis</b><small>${hardN} item(ns)</small></a>
         <a href="#/busca" class="mode"><span class="mi" lang="ja">検</span><b>Busca</b><small>tudo das aulas</small></a>
-        <a href="#/ajustes" class="mode"><span class="mi">⚙</span><b>Ajustes</b><small>exibição, backup</small></a>
+        <a href="#/relatorio" class="mode"><span class="mi">✎</span><b>Relatório</b><small>para o tutor</small></a>
       </nav>
     </main>
     <footer class="actions">
@@ -138,6 +141,7 @@ export function particulas(root, params) {
             if (hp[q.key] <= 0) delete hp[q.key];
           }
         } else hp[q.key] = (hp[q.key] || 0) + 1;
+        store.logEvent('particleHist', { key: q.key, p: q.p, escolhida: b.dataset.o });
         store.save();
         root.querySelectorAll('[data-o]').forEach((x) => {
           x.disabled = true;
@@ -181,7 +185,7 @@ export function dificeis(root) {
   const label = (c) => {
     const it = c.item;
     if (c.kind === 'vocab-rec') return `<span class="jp jp-s" lang="ja">${toHTML(it.jp)}</span> → ${esc(it.pt)}`;
-    if (c.kind === 'vocab-prod') return `${esc(it.pt)} → <span class="jp jp-s" lang="ja">${toHTML(it.jp)}</span>`;
+    if (c.kind === 'vocab-prod' || c.kind === 'frase-prod') return `${esc(it.pt)} → <span class="jp jp-s" lang="ja">${toHTML(it.jp)}</span>`;
     if (c.kind === 'erro') return `<span class="jp jp-s" lang="ja">${toHTML(it.certo)}</span>`;
     return `<span class="jp jp-s" lang="ja">${toHTML(it.jp)}</span>`;
   };

@@ -317,3 +317,6 @@ input[type=file] { margin: 8px 0; max-width: 100%; }
 }
 .next-btn { margin-top: 10px !important; }
 .diag pre { white-space: pre-wrap; word-break: break-word; font-size: .75rem; background: var(--surface-2); padding: 10px; border-radius: 10px; }
+
+.top-right { display: flex; align-items: center; gap: 4px; }
+.report { white-space: pre-wrap; word-break: break-word; font-family: var(--jp-font); font-size: .88rem; line-height: 1.55; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin: 0; }

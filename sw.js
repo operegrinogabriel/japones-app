@@ -1,6 +1,6 @@
 // Service worker: guarda o app e as aulas para funcionar sem internet.
 // Ao mudar arquivos do app, aumente VERSION para forçar a atualização.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `japones-${VERSION}`;
 
 const SHELL = [
@@ -19,6 +19,7 @@ const SHELL = [
   'js/review.js',
   'js/views.js',
   'js/browse.js',
+  'js/report.js',
   'icons/icon.svg',
   'icons/icon-192.png',
   'icons/icon-512.png',
