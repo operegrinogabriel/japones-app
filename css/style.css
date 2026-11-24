@@ -316,3 +316,4 @@ input[type=file] { margin: 8px 0; max-width: 100%; }
   .modes { grid-template-columns: repeat(4, 1fr); }
 }
 .next-btn { margin-top: 10px !important; }
+.diag pre { white-space: pre-wrap; word-break: break-word; font-size: .75rem; background: var(--surface-2); padding: 10px; border-radius: 10px; }

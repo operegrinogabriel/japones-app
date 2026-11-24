@@ -273,6 +273,9 @@ export function ajustes(root, params, reload) {
         <div class="row-item"><span class="muted small">${tts.hasJapanese() ? `Voz: ${esc(tts.voiceName())}` : 'Nenhuma voz japonesa encontrada.'}</span>
           <button class="btn ghost small" data-say="こんにちは。にほんごをべんきょうしています。">Testar voz</button></div>
         ${tts.hasJapanese() ? '' : `<details><summary>Como instalar a voz japonesa</summary>${tts.VOICE_HELP}</details>`}
+        <details class="diag"><summary>Diagnóstico de voz</summary>
+          <p class="muted small">Toque em "Testar voz" acima e depois tire um print desta caixa.</p>
+          <pre data-diag></pre></details>
       </section>
       <section class="panel">
         <h2>Revisão</h2>
@@ -298,6 +301,26 @@ export function ajustes(root, params, reload) {
       </section>
       <p class="muted small center">日本語 · app de estudo pessoal · funciona sem internet</p>
     </main>`;
+
+  const diagEl = root.querySelector('[data-diag]');
+  const drawDiag = () => {
+    if (!diagEl.isConnected) return;
+    const d = tts.diagnose();
+    diagEl.textContent = [
+      `suportado: ${d.suportado}`,
+      d.suportado && `instalado na tela inicial: ${d.instalado}`,
+      d.suportado && `vozes no aparelho: ${d.totalVozes}`,
+      d.suportado && `vozes em japonês: ${d.vozesJapones.length ? d.vozesJapones.join(', ') : 'nenhuma'}`,
+      d.suportado && `voz escolhida: ${d.vozEscolhida}`,
+      d.suportado && `aparelho: ${d.navegador}`,
+      '— eventos —',
+      ...(tts.log.length ? tts.log : ['(nenhum ainda)']),
+    ]
+      .filter(Boolean)
+      .join('\n');
+  };
+  drawDiag();
+  tts.onChange(drawDiag);
 
   root.querySelectorAll('select, input[type=checkbox], input[type=number]').forEach((el) =>
     el.addEventListener('change', () => {

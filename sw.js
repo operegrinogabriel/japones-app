@@ -1,6 +1,6 @@
 // Service worker: guarda o app e as aulas para funcionar sem internet.
 // Ao mudar arquivos do app, aumente VERSION para forçar a atualização.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `japones-${VERSION}`;
 
 const SHELL = [
